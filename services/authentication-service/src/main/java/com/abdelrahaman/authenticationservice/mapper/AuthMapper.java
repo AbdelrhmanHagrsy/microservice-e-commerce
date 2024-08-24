@@ -2,7 +2,7 @@ package com.abdelrahaman.authenticationservice.mapper;
 
 import com.abdelrahaman.authenticationservice.dto.RegistrationRequest;
 import com.abdelrahaman.authenticationservice.entity.User;
-import com.abdelrahaman.authenticationservice.kafka.CustomerCreationRequest;
+import org.abdelrhman.common.kafka.CustomerCreationRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;

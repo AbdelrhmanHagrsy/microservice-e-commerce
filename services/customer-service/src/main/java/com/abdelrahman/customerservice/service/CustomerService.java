@@ -1,9 +1,9 @@
 package com.abdelrahman.customerservice.service;
 
-import com.abdelrahman.customerservice.kafka.CustomerCreationRequest;
 import com.abdelrahman.customerservice.entity.Customer;
 import com.abdelrahman.customerservice.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
+import org.abdelrhman.common.kafka.CustomerCreationRequest;
 import org.springframework.stereotype.Service;
 
 @Service

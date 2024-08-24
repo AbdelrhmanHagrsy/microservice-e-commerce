@@ -24,6 +24,8 @@ spring:
       auto-offset-reset: earliest
     listener:
       missing-topics-fatal: false
+    topic:
+      name: customerProfileCreation
 
 
 eureka:

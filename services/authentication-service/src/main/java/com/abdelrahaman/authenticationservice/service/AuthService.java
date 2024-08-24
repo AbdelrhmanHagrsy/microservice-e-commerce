@@ -6,12 +6,12 @@ import com.abdelrahaman.authenticationservice.dto.RegistrationRequest;
 import com.abdelrahaman.authenticationservice.entity.ConfirmationToken;
 import com.abdelrahaman.authenticationservice.entity.User;
 import com.abdelrahaman.authenticationservice.exception.EntityAlreadyExist;
-import com.abdelrahaman.authenticationservice.kafka.CustomerCreationRequest;
 import com.abdelrahaman.authenticationservice.mapper.AuthMapper;
 import com.abdelrahaman.authenticationservice.repository.ConfirmationTokenRepository;
 import com.abdelrahaman.authenticationservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.abdelrhman.common.kafka.CustomerCreationRequest;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +34,9 @@ public class AuthService {
     private final AuthMapper authMapper;
     private final EmailNotifClient emailNotifClient;
     private final KafkaTemplate<String, CustomerCreationRequest> kafkaTemplate;
-  //  private final NewTopic newTopic;
+   // private final NewTopic newTopic;
+    @Value("${spring.kafka.topic.name}")
+    private String customerTopicName;
     @Value("${getway.url}")
     private String getwayUrl;
 
@@ -56,7 +58,7 @@ public class AuthService {
         sentEmail(registirationEmailRequest);
         // send a new Message to customer service to create a new customer profile
         CustomerCreationRequest customerCreationRequest = authMapper.convertRegisRequestToCustomerRequest(registrationRequest);
-//        kafkaTemplate.send(newTopic.name(),customerCreationRequest);
+        kafkaTemplate.send(customerTopicName,customerCreationRequest);
 
         log.info("Confirmation Token with ID:"+confirmationToken.getId()+" Done");
         return "Verify email by the link sent on your email address";

@@ -50,9 +50,4 @@ public class UserController {
         return true;
     }
 
-    @GetMapping("test")
-    public Boolean validateToken(@RequestBody @Valid RegistrationRequest registrationRequest){
-        authService.testKafka(registrationRequest);
-        return true;
-    }
 }

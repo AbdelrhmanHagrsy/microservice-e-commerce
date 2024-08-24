@@ -1,4 +1,4 @@
-package com.abdelrahaman.authenticationservice.kafka;
+package org.abdelrhman.common.kafka;
 
 import lombok.Builder;
 
