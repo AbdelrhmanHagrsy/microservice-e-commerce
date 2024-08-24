@@ -1,0 +1,37 @@
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: product-service
+          uri: lb:http://PRODUCT-SERVICE
+          predicates:
+            - Path=/products/**
+          filters:
+            - AuthenticationFilter
+        - id: authentication-service
+          uri: lb:http://AUTHENTICATION-SERVICE
+          predicates:
+            - Path=/auth/**
+          filters:
+            - AuthenticationFilter
+        - id: email-notif-service
+          uri: lb:http://EMAIL-NOTIF-SERVICE
+          predicates:
+            - Path=/email/**
+  application:
+    name: getway-service
+
+
+server:
+  port: 8222
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+

@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: product-nosql-service
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: product
+      username: abdelrahman
+      password: abdelrahman
+      authentication-database: admin
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+
+server:
+  port: 8083

@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: authentication-service
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: authentication
+      username: abdelrahman
+      password: abdelrahman
+      authentication-database: admin
+#  kafka:
+#    topic:
+#      name: customerProfileCreation
+#    producer:
+#      bootstrap-servers: 127.0.0.1:9092
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      #      properties:
+      #        spring.json.type.mapping: customerCreationRequest:com.abdelrahaman.authenticationservice.kafka.CustomerCreationRequest
+  kafka:
+    bootstrap-servers: 127.0.0.1:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+#      properties:
+#        spring.json.type.mapping: customerCreationRequest:com.abdelrahaman.authenticationservice.kafka.CustomerCreationRequest
+#    template:
+#      default-topic: customerProfileCreation
+
+
+
+server:
+  port: 9095
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+getway:
+  url: http://localhost:8222
