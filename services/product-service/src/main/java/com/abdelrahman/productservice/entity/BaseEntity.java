@@ -11,6 +11,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @MappedSuperclass
@@ -19,7 +20,7 @@ import java.time.LocalDate;
 @Data
 @SuperBuilder
 @EntityListeners(AuditingEntityListener.class)
-public class BaseEntity<T>{
+public class BaseEntity<T extends Serializable>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +30,7 @@ public class BaseEntity<T>{
     @CreatedBy
     public String createdBy;
     @LastModifiedDate
-    public LocalDate lastModifiedBy;
+    public LocalDate lastModifiedDate;
     @LastModifiedBy
-    public String modified;
+    public String modifiedBy;
 }

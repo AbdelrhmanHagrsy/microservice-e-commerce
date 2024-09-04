@@ -14,13 +14,13 @@ import java.math.BigDecimal;
 @SuperBuilder
 @Entity
 @Table(name = "product")
-public class Product extends BaseEntity<Integer> {
+public class Product extends BaseEntity<Long> {
 
     @Column(name="name")
     private String name;
     @Column(name="description")
     private String desc;
-    @Column(name="sku")
+    @Column(name="sku",unique = true)
     private String sku;
     @Column(name="price")
     private BigDecimal price;

@@ -14,7 +14,7 @@ import java.util.Set;
 @SuperBuilder
 @Entity
 @Table(name = "product_category")
-public class ProductCategory extends BaseEntity<Integer>{
+public class ProductCategory extends BaseEntity<Long>{
     @Column(name="name")
     private String name;
     @Column(name="description")

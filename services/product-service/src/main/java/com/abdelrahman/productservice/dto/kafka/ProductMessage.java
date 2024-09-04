@@ -1,24 +1,20 @@
-package com.abdelrhman.productnosqlservice.entity;
+package com.abdelrahman.productservice.dto.kafka;
 
+import com.abdelrahman.productservice.dto.ProductMessageStatus;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Date;
 
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@SuperBuilder
-@Document("product_collection")
-public class Product {
-    @Id
-    private String id;
+@Builder
+public class ProductMessage {
     private String productName;
     private String categoryName;
     private String desc;
@@ -32,6 +28,7 @@ public class Product {
     private Long productInventoryId;
     private Long productCategoryId;
     private Long discountId;
+    private ProductMessageStatus productMessageStatus;
     private LocalDate lastModifiedDate;
 
 }

@@ -1,14 +1,14 @@
 package com.abdelrahman.productservice.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.abdelrahman.productservice.dto.InventoryStatus;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,8 +16,15 @@ import java.math.BigDecimal;
 @SuperBuilder
 @Entity
 @Table(name = "product_inventory")
-public class ProductInventory extends BaseEntity<Integer> {
+public class ProductInventory extends BaseEntity<Long> {
 
     @Column(name="price")
-    private Integer Quintity;
+    private Integer quantity;
+
+    @Column(name="location")
+    private String location;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name ="status")
+    private InventoryStatus inventoryStatus;
 }
