@@ -20,12 +20,10 @@ public class ProductMessage {
     private String desc;
     private String sku;
     private BigDecimal price;
-    private Integer quantity;
     private String discountName;
     private Boolean discountActive;
     private BigDecimal discountPercent;
     private Long productId;
-    private Long productInventoryId;
     private Long productCategoryId;
     private Long discountId;
     private ProductMessageStatus productMessageStatus;

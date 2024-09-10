@@ -2,7 +2,6 @@ package com.abdelrahman.productservice.dto.request;
 
 import com.abdelrahman.productservice.dto.DiscountDto;
 import com.abdelrahman.productservice.dto.ProductCategoryDto;
-import com.abdelrahman.productservice.dto.ProductInventoryDto;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -36,8 +35,6 @@ public class ProductRequest {
     @NotNull(message = "Price cannot be null.")
     @Positive(message = "Price must be a positive value.")
     private BigDecimal price;
-
-    private ProductInventoryDto productInventoryDto;
 
     private ProductCategoryDto productCategoryDto;
 

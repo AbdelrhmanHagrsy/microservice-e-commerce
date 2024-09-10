@@ -2,10 +2,10 @@ package com.abdelrahman.customerservice.controller;
 
 import com.abdelrahman.customerservice.service.CustomerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import static com.abdelrahman.customerservice.constant.Constant.ControllersMapping.CUSTOMER_CONTROLLER;
+import static com.abdelrahman.customerservice.constant.Constant.CustomerController.*;
 
 @RestController
 @RequestMapping(CUSTOMER_CONTROLLER)
@@ -14,10 +14,9 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
-//
-//    @PostMapping(REGISTER_NEW_USER_API)
-//    public ResponseEntity<String> createCustomer(@RequestBody RegistrationRequest registrationRequest){
-//
-//    }
+    @GetMapping(GET_CUSTOMER)
+    public ResponseEntity<?> getCustomer(@PathVariable(name = "customer_id") Long customerID){
+        return customerService.getCustomer(customerID);
+    }
 
 }

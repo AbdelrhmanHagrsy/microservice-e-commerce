@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.boot.autoconfigure.amqp.RabbitConnectionDetails;
 
 import java.util.Set;
 
@@ -25,7 +26,10 @@ public class Customer extends BaseEntity {
     private String lastName;
     @Column(name = "telephone")
     private String telephone;
-    @OneToMany(mappedBy = "customer")
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "address_id",referencedColumnName = "id")
+    private CustomerAddress customerAddress;
+    @OneToMany(mappedBy = "customer",targetEntity = CustomerPayment.class )
     private Set<CustomerPayment> customerPaymentSet;
     @Column(name = "is_admin")
     private Boolean isAdmin;

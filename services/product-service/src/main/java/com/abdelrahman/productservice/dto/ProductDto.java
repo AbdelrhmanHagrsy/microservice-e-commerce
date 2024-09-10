@@ -27,8 +27,6 @@ public class ProductDto {
 
     private BigDecimal price;
 
-    private ProductInventoryDto productInventoryDto;
-
     private Long productCategoryId;
 
     private Long discountId;

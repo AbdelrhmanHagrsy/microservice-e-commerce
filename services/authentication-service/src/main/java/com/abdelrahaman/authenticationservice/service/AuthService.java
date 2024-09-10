@@ -47,7 +47,9 @@ public class AuthService {
         if(user.isPresent())
             throw new EntityAlreadyExist(String.format("User name : %s is already registered !",registrationRequest.userName()));
         //
-        User createdUser = userRepository.save(authMapper.convertRegisRequestToRegsEntity(registrationRequest));
+        User newUser = authMapper.convertRegisRequestToRegsEntity(registrationRequest);
+        newUser.setIsActive(false);
+        User createdUser = userRepository.save(newUser);
         ConfirmationToken confirmationToken = confirmationTokenRepository.save(
                 ConfirmationToken.builder()
                         .userId(createdUser.getId())

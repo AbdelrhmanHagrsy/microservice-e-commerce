@@ -1,27 +1,23 @@
 spring:
   application:
     name: order-service
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/order
-    username: abdelrahman
-    password: abdelrahman
-  jpa:
-    hibernate:
-      ddl-auto: create
-    database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: order
+      username: abdelrahman
+      password: abdelrahman
+      authentication-database: admin
 
-  kafka:
-    producer:
-      bootstrap-servers: localhost:9092
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      properties:
-        spring.json.type.mapping: orderConfirmation:com.abdelrahman.orderservice.kafka.OrderConfirmation
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
 
 
-
+server:
+  port: 8085
 
 
 

@@ -10,7 +10,7 @@ public class Constant {
     public final class ApisMapping{
         public static final String REGISTER_NEW_USER_API = "/register";
         public static final String LOGIN_API = "/login";
-        public static final String CONFIRM_ACCOUNT_API = "/confirm-account";
+        public static final String CONFIRM_ACCOUNT_API = "/confirmAccount";
         public static final String VALIDATE_TOKEN = "/validateToken";
     }
 

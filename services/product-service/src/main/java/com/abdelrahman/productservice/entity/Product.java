@@ -24,9 +24,7 @@ public class Product extends BaseEntity<Long> {
     private String sku;
     @Column(name="price")
     private BigDecimal price;
-    @OneToOne
-    @JoinColumn(name = "inventory_id",referencedColumnName = "id")
-    private ProductInventory productInventory;
+
     @ManyToOne
     @JoinColumn(name = "category_id",referencedColumnName = "id")
     private ProductCategory productCategory;

@@ -1,6 +1,7 @@
 package com.abdelrahman.customerservice.entity;
 
 import com.abdelrahman.customerservice.dto.PaymentType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,10 +23,11 @@ public class CustomerPayment extends BaseEntity {
     @Column(name = "provider")
     private String provider;
     @Column(name = "account_no")
-    private Integer accountNo;
+    private String accountNo;
     @Column(name = "expiry")
     private Date expiry;
-    @ManyToOne
+    @ManyToOne(targetEntity = Customer.class)
     @JoinColumn(name="user_id",referencedColumnName = "id")
+    @JsonIgnore
     private Customer customer;
 }

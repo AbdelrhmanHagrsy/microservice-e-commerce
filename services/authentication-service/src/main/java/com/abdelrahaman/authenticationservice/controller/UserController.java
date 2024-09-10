@@ -6,6 +6,7 @@ import com.abdelrahaman.authenticationservice.service.AuthService;
 import com.abdelrahaman.authenticationservice.service.JwtService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +19,7 @@ import static com.abdelrahaman.authenticationservice.constant.Constant.Controlle
 @RestController
 @RequestMapping(USER_CONTROLLER)
 @RequiredArgsConstructor
+@Slf4j
 public class UserController {
 
     private final AuthService authService;
@@ -46,8 +48,13 @@ public class UserController {
 
     @GetMapping(VALIDATE_TOKEN)
     public Boolean validateToken(@RequestParam(name = "token") String JwtToken){
-        jwtService.isTokenValid(JwtToken);
-        return true;
+        try {
+            jwtService.isTokenValid(JwtToken);
+            return true;
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return false;
+        }
     }
 
 }

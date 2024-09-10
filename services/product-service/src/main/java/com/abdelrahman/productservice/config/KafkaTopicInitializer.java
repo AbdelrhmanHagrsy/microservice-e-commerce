@@ -8,16 +8,16 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Properties;
 
-import static com.abdelrahman.productservice.constant.Constant.KafkaConst.KAFKA_PRODUCT_TOPIC_NAME;
+import static com.abdelrahman.productservice.constant.Constant.KafkaConst.*;
 
 @Component
 public class KafkaTopicInitializer implements ApplicationListener<ContextRefreshedEvent> {
 
-    @Value("${kafka.server.url}")
-    private String bootstrapServers;
+
 
 
     @Override
@@ -27,16 +27,18 @@ public class KafkaTopicInitializer implements ApplicationListener<ContextRefresh
 
     private void createTopicIfNotExists() {
         Properties properties = new Properties();
-        properties.put("bootstrap.servers", bootstrapServers);
+        properties.put("bootstrap.servers", BOOTSTRAP_SERVERS_URL);
 
+        // create product topic and inventory topic in kafka if they are not already exist
         try (AdminClient adminClient = AdminClient.create(properties)) {
-            NewTopic topic = TopicBuilder.name(KAFKA_PRODUCT_TOPIC_NAME)
+            NewTopic productTopic = TopicBuilder.name(KAFKA_PRODUCT_TOPIC_NAME)
                     .partitions(1)
                     .replicas(1)
                     .build();
 
-            adminClient.createTopics(Collections.singletonList(topic)).all().get();
-            System.out.println("Topic created successfully.");
+
+            adminClient.createTopics(Arrays.asList(productTopic)).all().get();
+            System.out.println("Topics created successfully.");
         } catch (Exception e) {
             if (e.getCause() instanceof TopicExistsException) {
                 System.out.println("Topic already exists.");

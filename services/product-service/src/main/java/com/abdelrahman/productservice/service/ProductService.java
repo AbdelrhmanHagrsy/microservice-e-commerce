@@ -6,13 +6,11 @@ import com.abdelrahman.productservice.dto.request.ProductRequest;
 import com.abdelrahman.productservice.entity.Discount;
 import com.abdelrahman.productservice.entity.Product;
 import com.abdelrahman.productservice.entity.ProductCategory;
-import com.abdelrahman.productservice.entity.ProductInventory;
 import com.abdelrahman.productservice.exception.EntityAlreadyExist;
 import com.abdelrahman.productservice.exception.EntityNotFound;
 import com.abdelrahman.productservice.mapper.ProductMapper;
 import com.abdelrahman.productservice.repository.DiscountRepository;
 import com.abdelrahman.productservice.repository.ProductCategoryRepository;
-import com.abdelrahman.productservice.repository.ProductInventoryRepository;
 import com.abdelrahman.productservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +32,6 @@ public class ProductService {
     private final ProductCategoryRepository productCategoryRepository;
     private final DiscountRepository discountRepository;
 
-    private final ProductInventoryRepository productInventoryRepository;
     private final ProductMapper productMapper;
     private final KafkaTemplate<String, ProductMessage> kafkaTemplate;
 
@@ -54,12 +51,6 @@ public class ProductService {
             ProductCategory productCategory = productCategoryRepository.findById(productRequest.getProductCategoryDto().getId())
                     .orElseThrow(() -> new EntityNotFound(String.format("Product category with ID %s not found.", productRequest.getProductCategoryDto().getId())));
             product.setProductCategory(productCategory);
-
-            // Add a new Inventory record for the new product
-            ProductInventory productInventory = productRequest.getProductInventoryDto() != null ? productMapper.convertProductInventoryDtoToEntity(productRequest.getProductInventoryDto())
-                    : productMapper.getDefaultInventory();
-            productInventory = productInventoryRepository.save(productInventory);
-            product.setProductInventory(productInventory);
 
             // Set Discount if provided
             if (productRequest.getDiscountDto() != null) {

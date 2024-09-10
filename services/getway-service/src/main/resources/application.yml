@@ -11,16 +11,31 @@ spring:
             - Path=/products/**
           filters:
             - AuthenticationFilter
+
+        - id: customer-service
+          uri: lb:http://CUSTOMER-SERVICE
+          predicates:
+            - Path=/customers/**
+          filters:
+            - AuthenticationFilter
+
         - id: authentication-service
           uri: lb:http://AUTHENTICATION-SERVICE
           predicates:
             - Path=/auth/**
           filters:
             - AuthenticationFilter
+
         - id: email-notif-service
           uri: lb:http://EMAIL-NOTIF-SERVICE
           predicates:
             - Path=/email/**
+
+        - id: inventory-service
+          uri: lb:http://INVENTORY-SERVICE
+          predicates:
+            - Path=/inventory/**
+
   application:
     name: getway-service
 
