@@ -31,7 +31,7 @@ public class Constant {
         public static final String KAFKA_INVENTORY_REVERSED_TOPIC_NAME = "inventoryReservedTopic";
         public static final String KAFKA_INVENTORY_FAILED_TOPIC_NAME = "inventoryFailedTopic";
         public static final  String BOOTSTRAP_SERVERS_URL = "localhost:9092";
-        public static final  String PRODUCT_GROUP_ID = "inventoryGroup";
+        public static final  String INVENTORY_GROUP_ID = "inventoryGroup";
     }
 
 }
