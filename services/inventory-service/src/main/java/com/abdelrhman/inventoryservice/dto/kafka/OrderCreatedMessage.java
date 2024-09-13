@@ -24,5 +24,4 @@ public class OrderCreatedMessage {
     private String paymentId;
     private OrderStatus orderStatus;
     private List<OrderItemDto> orderItemDtoList;
-    private String exceptionMessage;
 }

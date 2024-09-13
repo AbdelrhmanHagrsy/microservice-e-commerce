@@ -1,4 +1,4 @@
-package com.abdelrahman.customerservice.dto;
+package com.abdelrahman.paymentservice.dto.kafka;
 
 public enum PaymentType {
 

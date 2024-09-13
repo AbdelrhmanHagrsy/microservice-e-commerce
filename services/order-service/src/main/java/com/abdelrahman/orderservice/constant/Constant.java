@@ -14,6 +14,7 @@ public class Constant {
         public static final String KAFKA_ORDER_CREATED_TOPIC_NAME = "orderCreatedTopic";
         public static final String KAFKA_INVENTORY_FAILED_TOPIC_NAME = "inventoryFailedTopic";
 
+        public static final String KAFKA_ORDER_PAYMENT_TOPIC_NAME = "orderPaymentTopic";
 
         public static final  String BOOTSTRAP_SERVERS_URL = "localhost:9092";
         public static final  String ORDER_GROUP_ID = "orderGroup";

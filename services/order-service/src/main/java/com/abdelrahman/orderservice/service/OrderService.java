@@ -1,8 +1,8 @@
 package com.abdelrahman.orderservice.service;
 
-import com.abdelrahman.orderservice.dto.OrderItemDto;
-import com.abdelrahman.orderservice.dto.OrderRequest;
-import com.abdelrahman.orderservice.dto.OrderStatus;
+import com.abdelrahman.orderservice.dto.kafka.OrderItemDto;
+import com.abdelrahman.orderservice.dto.kafka.OrderRequest;
+import com.abdelrahman.orderservice.dto.kafka.OrderStatus;
 import com.abdelrahman.orderservice.dto.kafka.OrderCreatedMessage;
 import com.abdelrahman.orderservice.entity.Order;
 import com.abdelrahman.orderservice.entity.OrderItem;
@@ -42,7 +42,7 @@ public class OrderService {
         try {
             // validate total price
             BigDecimal itemTotalPrice = orderRequest.getOrderItemDtoList().stream()
-                    .map(x -> x.getItemPrice())
+                    .map(x -> x.getItemPrice().multiply(BigDecimal.valueOf(x.getQuantity())))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             if(orderRequest.getTotalPrice().compareTo(itemTotalPrice) != 0)
                 throw new InvalidOrderException("Invalid total price !");
@@ -53,6 +53,7 @@ public class OrderService {
                     .customerUserName(orderRequest.getCustomerUserName())
                     .transactionId(UUID.randomUUID())
                     .total(orderRequest.getTotalPrice())
+                    .paymentId(orderRequest.getPaymentId())
                     .createdAt(LocalDate.now())
                     .build());
             for (OrderItemDto orderItemDto : orderRequest.getOrderItemDtoList()) {
@@ -60,6 +61,7 @@ public class OrderService {
                         .productId(orderItemDto.getProductId())
                         .orderId(order.getId())
                         .quantity(orderItemDto.getQuantity())
+                        .itemPrice(orderItemDto.getItemPrice())
                         .createdAt(LocalDate.now())
                         .build());
             }

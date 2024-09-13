@@ -17,11 +17,5 @@ public class Constant {
 
     }
 
-    public final class CustomerPaymentController{
-        public static final String CUSTOMER_PAYMENT_CONTROLLER = "/customers/payment";
-        public static final String ADD_CUSTOMER_PAYMENT = "/addCustomerPayment/{customer_id}";
-        public static final String UPDATE_CUSTOMER_PAYMENT = "/updateCustomerPayment/{customerPayment_id}";
-        public static final String GET_CUSTOMER_PAYMENT = "/getCustomerPayment/{customerPayment_id}";
-    }
 
 }

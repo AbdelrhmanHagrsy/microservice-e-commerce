@@ -1,9 +1,8 @@
 package com.abdelrahman.paymentservice.config;
 
-import com.abdelrahman.paymentservice.dto.kafka.PaymentProcessedMessage;
+import com.abdelrahman.paymentservice.dto.kafka.OrderPaymentMessage;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -25,7 +24,7 @@ public class KafkaProducerConfig {
 
 
     @Bean
-    public ProducerFactory<String, PaymentProcessedMessage> createPaymentProcessedKafkaFactory() {
+    public ProducerFactory<String, OrderPaymentMessage> orderPaymentKafkaFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS_URL);
         config.put(org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -36,8 +35,8 @@ public class KafkaProducerConfig {
 
 
     @Bean
-    public KafkaTemplate<String, PaymentProcessedMessage> createPaymentProcessedKafkaTemplate() {
-        return new KafkaTemplate<>(createPaymentProcessedKafkaFactory());
+    public KafkaTemplate<String, OrderPaymentMessage> orderPaymentKafkaTemplate() {
+        return new KafkaTemplate<>(orderPaymentKafkaFactory());
     }
 
 

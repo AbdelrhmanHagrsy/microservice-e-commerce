@@ -30,7 +30,7 @@ public class KafkaTopicInitializer implements ApplicationListener<ContextRefresh
 
         // create product topic and inventory topic in kafka if they are not already exist
         try (AdminClient adminClient = AdminClient.create(properties)) {
-            NewTopic paymentTopic = TopicBuilder.name(KAFKA_PAYMENT_PROCESSED_TOPIC_NAME)
+            NewTopic paymentTopic = TopicBuilder.name(KAFKA_ORDER_PAYMENT_TOPIC_NAME)
                     .partitions(1)
                     .replicas(1)
                     .build();

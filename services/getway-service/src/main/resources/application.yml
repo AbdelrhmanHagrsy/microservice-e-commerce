@@ -36,6 +36,16 @@ spring:
           predicates:
             - Path=/inventory/**
 
+        - id: order-service
+          uri: lb:http://ORDER-SERVICE
+          predicates:
+            - Path=/orders/**
+
+        - id: payment-service
+          uri: lb:http://PAYMENT-SERVICE
+          predicates:
+            - Path=/payments/**
+
   application:
     name: getway-service
 

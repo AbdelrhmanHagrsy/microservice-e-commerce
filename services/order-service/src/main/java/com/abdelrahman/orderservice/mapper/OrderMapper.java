@@ -1,6 +1,6 @@
 package com.abdelrahman.orderservice.mapper;
 
-import com.abdelrahman.orderservice.dto.OrderRequest;
+import com.abdelrahman.orderservice.dto.kafka.OrderRequest;
 import com.abdelrahman.orderservice.dto.kafka.OrderCreatedMessage;
 import com.abdelrahman.orderservice.entity.Order;
 import org.springframework.stereotype.Component;
@@ -17,6 +17,7 @@ public class OrderMapper {
                 .paymentId(order.getPaymentId())
                 .orderStatus(order.getOrderStatus())
                 .orderItemDtoList(orderRequest.getOrderItemDtoList())
+                .total(order.getTotal())
                 .build();
     }
 }

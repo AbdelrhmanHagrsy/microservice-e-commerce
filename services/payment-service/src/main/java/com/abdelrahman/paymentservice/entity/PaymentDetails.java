@@ -1,6 +1,5 @@
-package com.abdelrahman.orderservice.entity;
+package com.abdelrahman.paymentservice.entity;
 
-import com.abdelrahman.orderservice.dto.kafka.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,22 +9,19 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @SuperBuilder
-@Document("order_collection")
-public class Order {
+@Document("payment_details")
+public class PaymentDetails {
     @Id
     private String id;
-    private String customerId;
-    private String customerUserName;
-    private UUID transactionId;
-    private BigDecimal total;
-    private String paymentId;
-    private OrderStatus orderStatus;
+    private String orderId;
+    private BigDecimal amount;
+    private String provider;
+    private Boolean status;
     private LocalDate createdAt;
     private LocalDate modifiedAt;
 }

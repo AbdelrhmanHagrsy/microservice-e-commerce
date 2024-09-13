@@ -29,7 +29,7 @@ public class KafkaTopicInitializer implements ApplicationListener<ContextRefresh
 
         // create product topic and inventory topic in kafka if they are not already exist
         try (AdminClient adminClient = AdminClient.create(properties)) {
-            NewTopic inventoryReversedTopic = TopicBuilder.name(KAFKA_INVENTORY_REVERSED_TOPIC_NAME)
+            NewTopic inventoryReversedTopic = TopicBuilder.name(KAFKA_INVENTORY_RESERVATION_MESSAGES_TOPIC)
                     .partitions(1)
                     .replicas(1)
                     .build();

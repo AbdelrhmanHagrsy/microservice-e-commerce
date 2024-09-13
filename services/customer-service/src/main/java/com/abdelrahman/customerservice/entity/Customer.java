@@ -29,8 +29,6 @@ public class Customer extends BaseEntity {
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "address_id",referencedColumnName = "id")
     private CustomerAddress customerAddress;
-    @OneToMany(mappedBy = "customer",targetEntity = CustomerPayment.class )
-    private Set<CustomerPayment> customerPaymentSet;
     @Column(name = "is_admin")
     private Boolean isAdmin;
     @ManyToOne

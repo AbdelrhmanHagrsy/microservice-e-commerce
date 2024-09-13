@@ -1,4 +1,5 @@
-package com.abdelrahman.orderservice.dto.kafka;
+package com.abdelrahman.paymentservice.dto.kafka;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,4 +24,3 @@ public class OrderCreatedMessage {
     private OrderStatus orderStatus;
     private List<OrderItemDto> orderItemDtoList;
 }
-

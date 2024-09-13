@@ -1,4 +1,4 @@
-package com.abdelrahman.orderservice.dto;
+package com.abdelrahman.orderservice.dto.kafka;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,5 +14,6 @@ public class OrderRequest {
     private String customerID;
     private String customerUserName;
     private BigDecimal totalPrice;
+    private String paymentId;
     private List<OrderItemDto> orderItemDtoList;
 }

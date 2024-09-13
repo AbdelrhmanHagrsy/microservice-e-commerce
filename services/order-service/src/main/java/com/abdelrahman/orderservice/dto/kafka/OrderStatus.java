@@ -1,4 +1,4 @@
-package com.abdelrahman.orderservice.dto;
+package com.abdelrahman.orderservice.dto.kafka;
 
 public enum OrderStatus {
     CREATED,

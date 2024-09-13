@@ -1,21 +1,17 @@
-package com.abdelrahman.customerservice.dto;
+package com.abdelrahman.paymentservice.dto.kafka;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
 public class CustomerPaymentDto {
-    private Long id;
+    private String id;
+    private String customerId;
     private PaymentType paymentType;
     private String provider;
     private String accountNo;

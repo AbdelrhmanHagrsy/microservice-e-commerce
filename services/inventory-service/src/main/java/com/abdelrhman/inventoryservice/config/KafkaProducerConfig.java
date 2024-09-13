@@ -1,8 +1,6 @@
 package com.abdelrhman.inventoryservice.config;
 
-import com.abdelrhman.inventoryservice.dto.kafka.InventoryFailedMessage;
-import com.abdelrhman.inventoryservice.dto.kafka.InventoryReservedMessage;
-import com.abdelrhman.inventoryservice.dto.kafka.OrderCreatedMessage;
+import com.abdelrhman.inventoryservice.dto.kafka.*;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -31,26 +29,26 @@ public class KafkaProducerConfig {
 
     // Inventory Reserved Kafka Producer Configuration
     @Bean
-    public ProducerFactory<String, OrderCreatedMessage> inventoryReservedProducerFactory() {
+    public ProducerFactory<String, ReservedInventoryOrderMessage> reservedInventoryOrderProducerFactory() {
         Map<String, Object> config = producerConfig();
         return new DefaultKafkaProducerFactory<>(config);
     }
 
     @Bean
-    public KafkaTemplate<String, OrderCreatedMessage> inventoryReservedKafkaTemplate() {
-        return new KafkaTemplate<>(inventoryReservedProducerFactory());
+    public KafkaTemplate<String, ReservedInventoryOrderMessage> reservedInventoryOrderKafkaTemplate() {
+        return new KafkaTemplate<>(reservedInventoryOrderProducerFactory());
     }
 
-    // Inventory Failed Kafka Producer Configuration
+    // Inventory Failed Reserved Kafka Producer Configuration
     @Bean
-    public ProducerFactory<String, OrderCreatedMessage> inventoryFailedProducerFactory() {
+    public ProducerFactory<String, OrderReservationFailureMessage> orderReservationFailureProducerFactory() {
         Map<String, Object> config = producerConfig();
         return new DefaultKafkaProducerFactory<>(config);
     }
 
     @Bean
-    public KafkaTemplate<String, OrderCreatedMessage> inventoryFailedKafkaTemplate() {
-        return new KafkaTemplate<>(inventoryFailedProducerFactory());
+    public KafkaTemplate<String, OrderReservationFailureMessage> orderReservationFailureFailedKafkaTemplate() {
+        return new KafkaTemplate<>(orderReservationFailureProducerFactory());
     }
 
     // Shared Producer Configuration
