@@ -19,4 +19,18 @@ public class Constant {
         public static final  String BOOTSTRAP_SERVERS_URL = "localhost:9092";
         public static final  String ORDER_GROUP_ID = "orderGroup";
     }
+
+    public final class EmailNotifyClientConstant{
+        public static final String EMAIL_SERVICE_NAME = "EMAIL-NOTIF-SERVICE";
+        public static final String SEND_COMPLETED_ORDER_EMAIL = "/email/order/completedOrder";
+        public static final String SEND_FAILED_ORDER_EMAIL = "/email/order/failedOrder";
+
+
+    }
+
+    public final class InventoryClientConstant{
+        public static final String INVENTORY_SERVICE_NAME = "INVENTORY-SERVICE";
+        public static final String CANCEL_ORDER_PRODUCT_INVENTORY_DEDUCTION = "/inventory/productInventory/cancelOrderDeduction";
+
+    }
 }

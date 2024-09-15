@@ -9,6 +9,10 @@ public class Constant {
         public static final String ADD_PRODUCT_INVENTORY = "/add";
         public static final String UPDATE_PRODUCT_INVENTORY = "/update/{inventory_id}";
         public static final String GET_PRODUCT_INVENTORY = "/get/{inventory_id}";
+        public static final String CANCEL_ORDER_PRODUCT_INVENTORY_DEDUCTION = "/cancelOrderDeduction";
+
+
+
     }
 
     public final  class ShoppingSessionController{

@@ -16,6 +16,8 @@ public class OrderItemDto {
 
     @NotBlank
     private String productId;
+    @NotBlank
+    private String productName;
     @NotNull
     @Positive
     private Integer quantity;

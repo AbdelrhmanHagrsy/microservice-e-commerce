@@ -1,13 +1,13 @@
 package com.abdelrhman.inventoryservice.controller;
 
 
+import com.abdelrhman.inventoryservice.dto.CancelOrderInventoryDeductionRequest;
 import com.abdelrhman.inventoryservice.dto.ProductInventoryDto;
 import com.abdelrhman.inventoryservice.service.ProductInventoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static com.abdelrhman.inventoryservice.constant.Constant.ProductInventoryController.*;
@@ -34,5 +34,10 @@ public class ProductInventoryController {
     @GetMapping(GET_PRODUCT_INVENTORY)
     public ResponseEntity<?> getProductInventory(@PathVariable(name = "inventory_id") String inventoryId){
         return productInventoryService.getProductInventory(inventoryId);
+    }
+
+    @PutMapping(CANCEL_ORDER_PRODUCT_INVENTORY_DEDUCTION)
+    public ResponseEntity<Boolean> cancelOrderProductInventoryDeduction(@RequestBody CancelOrderInventoryDeductionRequest cancelOrderInventoryDeductionRequest){
+        return productInventoryService.cancelOrderDeduction(cancelOrderInventoryDeductionRequest);
     }
 }

@@ -60,6 +60,7 @@ public class OrderService {
                 orderItemRepository.save(OrderItem.builder()
                         .productId(orderItemDto.getProductId())
                         .orderId(order.getId())
+                        .productName(orderItemDto.getProductName())
                         .quantity(orderItemDto.getQuantity())
                         .itemPrice(orderItemDto.getItemPrice())
                         .createdAt(LocalDate.now())

@@ -1,8 +1,8 @@
 package com.abdelrahman.orderservice.kafka;
 
-import com.abdelrahman.orderservice.dto.kafka.OrderStatus;
-import com.abdelrahman.orderservice.dto.kafka.OrderCreatedMessage;
-import com.abdelrahman.orderservice.dto.kafka.OrderPaymentMessage;
+import com.abdelrahman.orderservice.client.EmailNotifyClient;
+import com.abdelrahman.orderservice.client.InventoryClient;
+import com.abdelrahman.orderservice.dto.kafka.*;
 import com.abdelrahman.orderservice.entity.Order;
 import com.abdelrahman.orderservice.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,36 +17,82 @@ import static com.abdelrahman.orderservice.constant.Constant.KafkaConst.*;
 public class PaymentConsumerListener {
 
     private final OrderRepository orderRepository;
+    private final EmailNotifyClient emailNotifyClient;
+    private final InventoryClient inventoryClient;
 
     @KafkaListener(topics = KAFKA_ORDER_PAYMENT_TOPIC_NAME,groupId = ORDER_GROUP_ID,containerFactory = "orderPaymentKafkaListenerFactory")
     public void handlePaymentMessage(OrderPaymentMessage orderPaymentMessage){
         if(orderPaymentMessage.getIsOrderPaid()){
             orderPaymentSuccess(orderPaymentMessage.getOrderCreatedMessage());
         }else {
-            orderPaymentFailure(orderPaymentMessage.getOrderCreatedMessage());
+            orderPaymentFailure(orderPaymentMessage.getOrderCreatedMessage(),orderPaymentMessage.getErrorMessage());
         }
     }
 
+    @KafkaListener(topics = KAFKA_INVENTORY_FAILED_TOPIC_NAME,groupId = ORDER_GROUP_ID,containerFactory = "orderReservationFailureKafkaListenerFactory")
+    public void handlePaymentMessage(OrderReservationFailureMessage orderReservationFailureMessage){
+
+            orderReservationFailed(orderReservationFailureMessage.getOrderCreatedMessage(),orderReservationFailureMessage.getIsDeducted(),orderReservationFailureMessage.getErrorMessage());
+
+    }
 
     private void orderPaymentSuccess(OrderCreatedMessage orderMessage) {
 
         Order order = orderRepository.findById(orderMessage.getOrderId()).get();
         if (order.getOrderStatus().equals(OrderStatus.CREATED)) {
             order.setOrderStatus(OrderStatus.COMPLETED);
-
             orderRepository.save(order);
             // send email to user order completed
+            CompletedOrderEmailRequest completedOrderEmailRequest = CompletedOrderEmailRequest.builder()
+                    .customerId(orderMessage.getCustomerId())
+                    .customerUserName(orderMessage.getCustomerUserName())
+                    .total(orderMessage.getTotal())
+                    .orderItemDtoList(orderMessage.getOrderItemDtoList())
+                    .build();
+            emailNotifyClient.sendCompletedOrderEmail(completedOrderEmailRequest);
         }
     }
 
-    private void orderPaymentFailure(OrderCreatedMessage orderMessage){
+    private void orderPaymentFailure(OrderCreatedMessage orderMessage,String errorReason){
         Order order = orderRepository.findById(orderMessage.getOrderId()).get();
         if (order.getOrderStatus().equals(OrderStatus.CREATED)) {
             order.setOrderStatus(OrderStatus.FAILED);
             orderRepository.save(order);
             // update order products inventory
-
+            CancelOrderInventoryDeductionRequest deductionRequest = CancelOrderInventoryDeductionRequest.builder()
+                    .orderItemDtoList(orderMessage.getOrderItemDtoList())
+                    .build();
+            inventoryClient.cancelOrderProductInventoryDeduction(deductionRequest);
             // send email to user order completed
+            OrderFailedRequest orderFailedRequest =OrderFailedRequest.builder()
+                    .customerUserName(orderMessage.getCustomerUserName())
+                    .total(orderMessage.getTotal())
+                    .errorMessage(errorReason)
+                    .build();
+            emailNotifyClient.sendFailedOrderEmail(orderFailedRequest);
         }
     }
+
+
+    private void orderReservationFailed(OrderCreatedMessage orderMessage, Boolean deductStatus, String errorReason) {
+        Order order = orderRepository.findById(orderMessage.getOrderId()).get();
+        if (order.getOrderStatus().equals(OrderStatus.CREATED)) {
+            order.setOrderStatus(OrderStatus.FAILED);
+            orderRepository.save(order);
+            // update order products inventory
+            CancelOrderInventoryDeductionRequest deductionRequest = CancelOrderInventoryDeductionRequest.builder()
+                    .orderItemDtoList(orderMessage.getOrderItemDtoList())
+                    .build();
+            if (deductStatus)
+                inventoryClient.cancelOrderProductInventoryDeduction(deductionRequest);
+            // send email to user order completed
+            OrderFailedRequest orderFailedRequest = OrderFailedRequest.builder()
+                    .customerUserName(orderMessage.getCustomerUserName())
+                    .total(orderMessage.getTotal())
+                    .errorMessage(errorReason)
+                    .build();
+            emailNotifyClient.sendFailedOrderEmail(orderFailedRequest);
+        }
+    }
+
 }

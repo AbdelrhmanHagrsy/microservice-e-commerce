@@ -1,4 +1,4 @@
-package com.abdelrhman.inventoryservice.dto;
+package com.example.emailnotifservice.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

@@ -1,5 +1,6 @@
 package com.abdelrhman.inventoryservice.service;
 
+import com.abdelrhman.inventoryservice.dto.CancelOrderInventoryDeductionRequest;
 import com.abdelrhman.inventoryservice.dto.InventoryStatus;
 import com.abdelrhman.inventoryservice.dto.OrderItemDto;
 import com.abdelrhman.inventoryservice.dto.ProductInventoryDto;
@@ -53,9 +54,10 @@ public class ProductInventoryService {
             if(availableQuantity == 0 || orderItemDto.getQuantity() > availableQuantity)
                 throw new QuantityNotAvailable("Quantity for product id:"+orderItemDto.getProductId()+" not available");
             //
-            productInventory.setAvailableQuantity(availableQuantity-orderItemDto.getQuantity());
-            productInventory.setTotalQuantity((availableQuantity-orderItemDto.getQuantity())+productInventory.getDamagedQuantity());
-            productInventory.setInventoryStatus(productInventory.getAvailableQuantity() == 0 ? InventoryStatus.OUT_OF_STOCK : InventoryStatus.AVAILABLE);
+            availableQuantity -= orderItemDto.getQuantity();
+            productInventory.setAvailableQuantity(availableQuantity);
+            productInventory.setTotalQuantity(availableQuantity + productInventory.getDamagedQuantity());
+            productInventory.setInventoryStatus(availableQuantity == 0 ? InventoryStatus.OUT_OF_STOCK : InventoryStatus.AVAILABLE);
             productInventoryRepository.save(productInventory);
         }
     }
@@ -116,4 +118,17 @@ public class ProductInventoryService {
         }
     }
 
+    public ResponseEntity<Boolean> cancelOrderDeduction(CancelOrderInventoryDeductionRequest cancelOrderInventoryDeductionRequest) {
+        for(OrderItemDto orderItemDto : cancelOrderInventoryDeductionRequest.getOrderItemDtoList()){
+            ProductInventory productInventory = productInventoryRepository.findByProductId(orderItemDto.getProductId()).get();
+            Integer availableQuantity = productInventory.getAvailableQuantity();
+            //
+            availableQuantity += orderItemDto.getQuantity();
+            productInventory.setAvailableQuantity(availableQuantity);
+            productInventory.setTotalQuantity(availableQuantity + productInventory.getDamagedQuantity());
+            productInventory.setInventoryStatus(availableQuantity == 0 ? InventoryStatus.OUT_OF_STOCK : InventoryStatus.AVAILABLE);
+            productInventoryRepository.save(productInventory);
+        }
+        return ResponseEntity.ok().body(true);
+    }
 }
