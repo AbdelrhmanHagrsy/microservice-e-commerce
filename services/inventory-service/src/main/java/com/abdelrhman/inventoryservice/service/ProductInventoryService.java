@@ -10,7 +10,6 @@ import com.abdelrhman.inventoryservice.exception.EntityAlreadyExist;
 import com.abdelrhman.inventoryservice.exception.EntityNotFound;
 import com.abdelrhman.inventoryservice.exception.QuantityNotAvailable;
 import com.abdelrhman.inventoryservice.repository.ProductInventoryRepository;
-import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

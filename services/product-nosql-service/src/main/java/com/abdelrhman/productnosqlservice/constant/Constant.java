@@ -9,4 +9,11 @@ public class Constant {
 
 
     }
+
+    public final class ProductController{
+
+        public static final String PRODUCT_PATH = "/noSqlProducts";
+        public static final String GET_ALL_PRODUCT_WITH_FILTERS = "/getAllFilters";
+
+    }
 }

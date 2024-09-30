@@ -12,6 +12,20 @@ spring:
           filters:
             - AuthenticationFilter
 
+        - id: product-service-websocket
+          uri: lb:http://PRODUCT-SERVICE
+          predicates:
+            - Path=/websocket/**
+          filters:
+            - AuthenticationFilter
+
+        - id: product-nosql-service
+          uri: lb:http://PRODUCT-NOSQL-SERVICE
+          predicates:
+            - Path=/noSqlProducts/**
+          filters:
+            - AuthenticationFilter
+
         - id: customer-service
           uri: lb:http://CUSTOMER-SERVICE
           predicates:

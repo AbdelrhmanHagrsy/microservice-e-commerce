@@ -9,6 +9,14 @@ spring:
       username: abdelrahman
       password: abdelrahman
       authentication-database: admin
+  cache:
+    type: redis
+    host: localhost
+    port: 6379
+    password: abdelrahman
+    time-to-live: 60000
+
+
 
 eureka:
   client:
@@ -18,9 +26,6 @@ eureka:
 
 server:
   port: 8085
-
-
-
 
 
 

@@ -1,12 +1,10 @@
 package com.abdelrahman.orderservice.service;
 
-import com.abdelrahman.orderservice.dto.kafka.OrderItemDto;
-import com.abdelrahman.orderservice.dto.kafka.OrderRequest;
-import com.abdelrahman.orderservice.dto.kafka.OrderStatus;
-import com.abdelrahman.orderservice.dto.kafka.OrderCreatedMessage;
+import com.abdelrahman.orderservice.dto.kafka.*;
 import com.abdelrahman.orderservice.entity.Order;
 import com.abdelrahman.orderservice.entity.OrderItem;
 import com.abdelrahman.orderservice.exception.InvalidOrderException;
+import com.abdelrahman.orderservice.exception.OrderConflictExceotion;
 import com.abdelrahman.orderservice.mapper.OrderMapper;
 import com.abdelrahman.orderservice.repository.OrderItemRepository;
 import com.abdelrahman.orderservice.repository.OrderRepository;
@@ -20,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import static com.abdelrahman.orderservice.constant.Constant.KafkaConst.KAFKA_ORDER_CREATED_TOPIC_NAME;
@@ -33,22 +32,32 @@ public class OrderService {
     private final OrderItemRepository orderItemRepository;
     private final OrderMapper orderMapper;
 
+    private final RedisService redisService;
     private final KafkaTemplate<String, OrderCreatedMessage> kafkaTemplate;
 
 
     @Transactional
     public ResponseEntity<?> createOrder(OrderRequest orderRequest) {
 
+        // handel idempotency te prevent duplicate same order request
+        // add idempotent key in redis for 5 min
+        boolean status = redisService.addOrderLock(orderRequest.getIdempotentKey(), 300L);
+        if (!status) {
+            throw new OrderConflictExceotion("Order already processed");
+        }
+
         try {
             // validate total price
             BigDecimal itemTotalPrice = orderRequest.getOrderItemDtoList().stream()
                     .map(x -> x.getItemPrice().multiply(BigDecimal.valueOf(x.getQuantity())))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
-            if(orderRequest.getTotalPrice().compareTo(itemTotalPrice) != 0)
+            if (orderRequest.getTotalPrice().compareTo(itemTotalPrice) != 0)
                 throw new InvalidOrderException("Invalid total price !");
             // create order and orderItems
             Order order = orderRepository.save(Order.builder()
                     .orderStatus(OrderStatus.CREATED)
+                    .paymentStatus(PaymentStatus.PENDING)
+                    .deliveryStatus(DeliveryStatus.NOT_DISPATCHED)
                     .customerId(orderRequest.getCustomerID())
                     .customerUserName(orderRequest.getCustomerUserName())
                     .transactionId(UUID.randomUUID())
@@ -67,17 +76,24 @@ public class OrderService {
                         .build());
             }
             // send kafka message to inventory service
-            OrderCreatedMessage orderCreatedMessage = orderMapper.prepareOrderMessage(order,orderRequest);
-            kafkaTemplate.send(KAFKA_ORDER_CREATED_TOPIC_NAME,orderCreatedMessage);
+            OrderCreatedMessage orderCreatedMessage = orderMapper.prepareOrderMessage(order, orderRequest);
+            kafkaTemplate.send(KAFKA_ORDER_CREATED_TOPIC_NAME, orderCreatedMessage);
             return ResponseEntity.status(HttpStatus.CREATED).body(order);
-        }catch (InvalidOrderException ex){
+        } catch (InvalidOrderException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (OrderConflictExceotion ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
         } catch (Exception ex) {
-            log.error("Faild to create order: "+ ex.getMessage());
+            log.error("Faild to create order: " + ex.getMessage());
             return ResponseEntity.internalServerError().body("Failed to create order!");
+        } finally {
+            redisService.removeIdempotentKey(orderRequest.getIdempotentKey());
         }
 
     }
 
 
+    public List<Order> fetchUserOrders(String userName) {
+        return orderRepository.findByCustomerUserName(userName);
+    }
 }

@@ -16,4 +16,6 @@ public class OrderRequest {
     private BigDecimal totalPrice;
     private String paymentId;
     private List<OrderItemDto> orderItemDtoList;
+    private String idempotentKey;
+    private String paymentToken;
 }

@@ -11,13 +11,14 @@ public class OrderMapper {
     public OrderCreatedMessage prepareOrderMessage(Order order, OrderRequest orderRequest){
         return OrderCreatedMessage.builder()
                 .orderId(order.getId())
-                .transactionId(order.getTransactionId())
+                .idempotentKey(orderRequest.getIdempotentKey())
                 .customerId(order.getCustomerId())
                 .customerUserName(order.getCustomerUserName())
                 .paymentId(order.getPaymentId())
                 .orderStatus(order.getOrderStatus())
                 .orderItemDtoList(orderRequest.getOrderItemDtoList())
                 .total(order.getTotal())
+                .paymentToken(orderRequest.getPaymentToken())
                 .build();
     }
 }

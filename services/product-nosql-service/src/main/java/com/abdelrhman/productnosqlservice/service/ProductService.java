@@ -1,12 +1,18 @@
-package com.abdelrhman.productnosqlservice;
+package com.abdelrhman.productnosqlservice.service;
 
+import com.abdelrhman.productnosqlservice.dto.ProductFilterRequest;
 import com.abdelrhman.productnosqlservice.entity.Product;
 import com.abdelrhman.productnosqlservice.dto.ProductMessage;
 import com.abdelrhman.productnosqlservice.dto.ProductMessageStatus;
 import com.abdelrhman.productnosqlservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -34,5 +40,10 @@ public class ProductService {
         product.setDiscountId(productMessage.getDiscountId());
         productRepository.save(product);
         return true;
+    }
+
+    public Page<Product> fetchAllProductsWithFilters(ProductFilterRequest productFilterRequest) {
+        Pageable pageable = PageRequest.of(productFilterRequest.getPage(),productFilterRequest.getSize());
+        return productRepository.findProductsByFilter(productFilterRequest.getFilters(),pageable);
     }
 }

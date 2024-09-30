@@ -32,6 +32,17 @@ public class Constant {
         public static final String GET_INVENTORY = "/get/{inventory_id}";
     }
 
+    public final  class OfferController{
+        public static final String PRODUCTS_OFFER = "/products/offer";
+        public static final String ADD_OFFER = "/add";
+        public static final String DELETE_OFFER = "/delete/{offer_id}";
+        public static final String CHANGE_OFFER_ACTIVITY_STATUS = "/changeStatus/{offer_id}";
+
+        public static final String UPDATE_OFFER = "/update/{offer_id}";
+        public static final String GET_ALL_OFFER_BY_CATEGORY_AND_STATUS = "/getAll";
+        public static String OFFER_SAVED = "New offer saved successfully";
+    }
+
     public final class KafkaConst{
         public static final String KAFKA_PRODUCT_TOPIC_NAME = "productTopic";
         public static final String KAFKA_ORDER_CREATED_TOPIC_NAME = "orderCreatedTopic";

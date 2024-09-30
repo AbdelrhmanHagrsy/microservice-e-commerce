@@ -17,10 +17,11 @@ public class OrderCreatedMessage {
     private String orderId;
     private String customerId;
     private String customerUserName;
-    private UUID transactionId;
+    private String idempotentKey;
     private BigDecimal total;
     private String paymentId;
     private OrderStatus orderStatus;
     private List<OrderItemDto> orderItemDtoList;
+    private String paymentToken;
 }
 

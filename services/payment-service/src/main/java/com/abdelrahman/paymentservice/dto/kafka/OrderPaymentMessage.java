@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class OrderPaymentMessage {
     private OrderCreatedMessage orderCreatedMessage;
-    private Boolean isOrderPaid;
+    private PaymentStatus paymentStatus;
     private String errorMessage;
 }

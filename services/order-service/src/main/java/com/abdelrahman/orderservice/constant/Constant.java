@@ -7,6 +7,8 @@ public class Constant {
         public static final String ADD_ORDER = "/add";
         public static final String UPDATE_ORDER = "/update/{order_id}";
         public static final String GET_ORDER = "/get/{order_id}";
+        public static final String FETCH_ORDERS_BY_USER_NAME = "/get/{userName}";
+
     }
 
 

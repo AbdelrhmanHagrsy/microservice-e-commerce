@@ -8,5 +8,5 @@ import java.util.UUID;
 
 
 @Repository
-public interface PaymentTransactionRepository extends MongoRepository<PaymentTransaction, UUID> {
+public interface PaymentTransactionRepository extends MongoRepository<PaymentTransaction, String> {
 }

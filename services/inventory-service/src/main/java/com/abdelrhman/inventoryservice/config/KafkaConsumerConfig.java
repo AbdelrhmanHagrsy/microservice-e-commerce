@@ -2,14 +2,17 @@ package com.abdelrhman.inventoryservice.config;
 
 import com.abdelrhman.inventoryservice.dto.kafka.OrderCreatedMessage;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
-import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.kafka.support.serializer.JsonSerializer;
+
 import java.util.HashMap;
 import java.util.Map;
 import static com.abdelrhman.inventoryservice.constant.Constant.KafkaConst.*;
@@ -59,5 +62,19 @@ public class KafkaConsumerConfig {
         ConcurrentKafkaListenerContainerFactory<String, OrderCreatedMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(orderCreatedConsumerFactory());
         return factory;
+    }
+
+
+    @Bean
+    public ProducerFactory<String, OrderCreatedMessage> producerFactory() {
+        Map<String, Object> config = new HashMap<>();
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS_URL);
+        return new DefaultKafkaProducerFactory<>(
+                config, new StringSerializer(), new JsonSerializer<>());
+    }
+
+    @Bean
+    public KafkaTemplate<String, OrderCreatedMessage> retryableTopicKafkaTemplate() {
+        return new KafkaTemplate<>(producerFactory());
     }
 }

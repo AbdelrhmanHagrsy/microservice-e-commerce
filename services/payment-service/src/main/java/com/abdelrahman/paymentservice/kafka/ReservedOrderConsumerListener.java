@@ -1,6 +1,7 @@
 package com.abdelrahman.paymentservice.kafka;
 
 import com.abdelrahman.paymentservice.dto.kafka.OrderPaymentMessage;
+import com.abdelrahman.paymentservice.dto.kafka.PaymentStatus;
 import com.abdelrahman.paymentservice.dto.kafka.ReservedInventoryOrderMessage;
 import com.abdelrahman.paymentservice.entity.PaymentTransaction;
 import com.abdelrahman.paymentservice.repository.PaymentTransactionRepository;
@@ -27,14 +28,17 @@ public class ReservedOrderConsumerListener {
     @KafkaListener(topics = KAFKA_INVENTORY_RESERVATION_MESSAGES_TOPIC, groupId = PAYMENT_GROUP_ID, containerFactory = "reservedInventoryOrderKafkaListenerFactory")
     public void handleOrderProductPayment(ReservedInventoryOrderMessage reservedInventoryOrderMessage) {
 
-        Optional<PaymentTransaction> paymentTransactionOptional = paymentTransactionRepository.findById(reservedInventoryOrderMessage.getOrderCreatedMessage().getTransactionId());
+        // handel idempotency for payment process to prevent duplicate payment process
+        Optional<PaymentTransaction> paymentTransactionOptional = paymentTransactionRepository.findById(reservedInventoryOrderMessage.getOrderCreatedMessage().getIdempotentKey());
+        PaymentTransaction paymentTransaction;
         if (paymentTransactionOptional.isEmpty()) {
-            paymentTransactionRepository.save(
+            paymentTransaction= paymentTransactionRepository.save(
                     PaymentTransaction.builder()
-                            .id(reservedInventoryOrderMessage.getOrderCreatedMessage().getTransactionId())
+                            .id(reservedInventoryOrderMessage.getOrderCreatedMessage().getIdempotentKey())
                             .isOrderPaid(false)
                             .build());
         } else {
+            paymentTransaction = paymentTransactionOptional.get();
             // skip if order already get Paid
             if (paymentTransactionOptional.get().getIsOrderPaid())
                 return;
@@ -42,16 +46,19 @@ public class ReservedOrderConsumerListener {
         //
         OrderPaymentMessage orderPaymentMessage = OrderPaymentMessage.builder()
                 .orderCreatedMessage(reservedInventoryOrderMessage.getOrderCreatedMessage())
-                .isOrderPaid(false)
+                .paymentStatus(PaymentStatus.PENDING)
                 .build();
         //
         try {
-            // make payment process
-            paymentDetailsService.handleOrderPaymentProcess(reservedInventoryOrderMessage.getOrderCreatedMessage());
-            orderPaymentMessage.setIsOrderPaid(true);
+            // make the payment process
+            PaymentStatus paymentStatus = paymentDetailsService.handleOrderPaymentProcess(reservedInventoryOrderMessage.getOrderCreatedMessage());
+            orderPaymentMessage.setPaymentStatus(paymentStatus);
+            // set payment transaction status true
+            paymentTransaction.setIsOrderPaid(true);
+            paymentTransactionRepository.save(paymentTransaction);
 
         } catch (Exception ex) {
-            orderPaymentMessage.setIsOrderPaid(false);
+            orderPaymentMessage.setPaymentStatus(PaymentStatus.FAILED);
             orderPaymentMessage.setErrorMessage(ex.getMessage());
         }
 

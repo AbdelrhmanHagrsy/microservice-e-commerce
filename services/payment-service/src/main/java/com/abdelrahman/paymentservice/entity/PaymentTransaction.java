@@ -16,6 +16,6 @@ import java.util.UUID;
 @Document("order_transaction")
 public class PaymentTransaction {
     @Id
-    private UUID id;  // order transactionId
+    private String id;  // order transactionId
     private Boolean isOrderPaid;
 }

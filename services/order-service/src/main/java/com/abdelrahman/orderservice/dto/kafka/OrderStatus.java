@@ -3,5 +3,7 @@ package com.abdelrahman.orderservice.dto.kafka;
 public enum OrderStatus {
     CREATED,
     COMPLETED,
-    FAILED
+    CANCELED,
+    WAITING_FOR_DELIVERY    // Order paid, waiting for delivery
+
 }

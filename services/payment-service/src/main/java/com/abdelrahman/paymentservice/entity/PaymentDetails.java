@@ -1,5 +1,6 @@
 package com.abdelrahman.paymentservice.entity;
 
+import com.abdelrahman.paymentservice.dto.kafka.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,8 +21,7 @@ public class PaymentDetails {
     private String id;
     private String orderId;
     private BigDecimal amount;
-    private String provider;
-    private Boolean status;
+    private PaymentStatus paymentStatus;
     private LocalDate createdAt;
     private LocalDate modifiedAt;
 }

@@ -1,6 +1,8 @@
 package com.abdelrahman.orderservice.entity;
 
+import com.abdelrahman.orderservice.dto.kafka.DeliveryStatus;
 import com.abdelrahman.orderservice.dto.kafka.OrderStatus;
+import com.abdelrahman.orderservice.dto.kafka.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,4 +30,6 @@ public class Order {
     private OrderStatus orderStatus;
     private LocalDate createdAt;
     private LocalDate modifiedAt;
+    private PaymentStatus paymentStatus;
+    private DeliveryStatus deliveryStatus;
 }

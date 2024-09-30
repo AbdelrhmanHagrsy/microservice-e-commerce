@@ -22,25 +22,26 @@ public class PaymentConsumerListener {
 
     @KafkaListener(topics = KAFKA_ORDER_PAYMENT_TOPIC_NAME,groupId = ORDER_GROUP_ID,containerFactory = "orderPaymentKafkaListenerFactory")
     public void handlePaymentMessage(OrderPaymentMessage orderPaymentMessage){
-        if(orderPaymentMessage.getIsOrderPaid()){
-            orderPaymentSuccess(orderPaymentMessage.getOrderCreatedMessage());
-        }else {
+        if(orderPaymentMessage.getPaymentStatus().equals(PaymentStatus.FAILED)){
             orderPaymentFailure(orderPaymentMessage.getOrderCreatedMessage(),orderPaymentMessage.getErrorMessage());
+        }else {
+            orderPaymentSuccess(orderPaymentMessage.getOrderCreatedMessage(),orderPaymentMessage.getPaymentStatus());
         }
     }
 
     @KafkaListener(topics = KAFKA_INVENTORY_FAILED_TOPIC_NAME,groupId = ORDER_GROUP_ID,containerFactory = "orderReservationFailureKafkaListenerFactory")
-    public void handlePaymentMessage(OrderReservationFailureMessage orderReservationFailureMessage){
+    public void handleInventoryFailedMessage(OrderReservationFailureMessage orderReservationFailureMessage){
 
             orderReservationFailed(orderReservationFailureMessage.getOrderCreatedMessage(),orderReservationFailureMessage.getIsDeducted(),orderReservationFailureMessage.getErrorMessage());
 
     }
 
-    private void orderPaymentSuccess(OrderCreatedMessage orderMessage) {
+    private void orderPaymentSuccess(OrderCreatedMessage orderMessage,PaymentStatus paymentStatus) {
 
         Order order = orderRepository.findById(orderMessage.getOrderId()).get();
         if (order.getOrderStatus().equals(OrderStatus.CREATED)) {
-            order.setOrderStatus(OrderStatus.COMPLETED);
+            order.setOrderStatus(OrderStatus.WAITING_FOR_DELIVERY);
+            order.setPaymentStatus(paymentStatus);
             orderRepository.save(order);
             // send email to user order completed
             CompletedOrderEmailRequest completedOrderEmailRequest = CompletedOrderEmailRequest.builder()
@@ -56,7 +57,8 @@ public class PaymentConsumerListener {
     private void orderPaymentFailure(OrderCreatedMessage orderMessage,String errorReason){
         Order order = orderRepository.findById(orderMessage.getOrderId()).get();
         if (order.getOrderStatus().equals(OrderStatus.CREATED)) {
-            order.setOrderStatus(OrderStatus.FAILED);
+            order.setOrderStatus(OrderStatus.CANCELED);
+            order.setPaymentStatus(PaymentStatus.FAILED);
             orderRepository.save(order);
             // update order products inventory
             CancelOrderInventoryDeductionRequest deductionRequest = CancelOrderInventoryDeductionRequest.builder()
@@ -77,7 +79,7 @@ public class PaymentConsumerListener {
     private void orderReservationFailed(OrderCreatedMessage orderMessage, Boolean deductStatus, String errorReason) {
         Order order = orderRepository.findById(orderMessage.getOrderId()).get();
         if (order.getOrderStatus().equals(OrderStatus.CREATED)) {
-            order.setOrderStatus(OrderStatus.FAILED);
+            order.setOrderStatus(OrderStatus.CANCELED);
             orderRepository.save(order);
             // update order products inventory
             CancelOrderInventoryDeductionRequest deductionRequest = CancelOrderInventoryDeductionRequest.builder()

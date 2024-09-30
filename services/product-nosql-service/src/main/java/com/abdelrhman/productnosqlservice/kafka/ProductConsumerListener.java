@@ -1,7 +1,7 @@
 package com.abdelrhman.productnosqlservice.kafka;
 
-import com.abdelrhman.productnosqlservice.ProductService;
 import com.abdelrhman.productnosqlservice.dto.ProductMessage;
+import com.abdelrhman.productnosqlservice.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
