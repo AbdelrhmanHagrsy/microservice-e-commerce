@@ -43,6 +43,13 @@ public class Constant {
         public static String OFFER_SAVED = "New offer saved successfully";
     }
 
+    public final class AttachmentController {
+        public static final String ATTACHMENT_PATH = "/products/attachment";
+        public static final String UPLOAD_PRODUCT_IMAGE = "/upload/{product_id}";
+        public static final String DELETE_PRODUCT_IMAGE = "/delete/{aws_image_name}";
+
+    }
+
     public final class KafkaConst{
         public static final String KAFKA_PRODUCT_TOPIC_NAME = "productTopic";
         public static final String KAFKA_ORDER_CREATED_TOPIC_NAME = "orderCreatedTopic";

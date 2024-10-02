@@ -1,6 +1,8 @@
 spring:
   application:
     name: product-service
+    bucket:
+      name: abdelrahmanecommerce
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/product
@@ -30,3 +32,15 @@ server:
 kafka:
   server:
     url: localhost:9092
+
+
+cloud:
+  aws:
+    credentials:
+      access-key: test
+      secret-key: test
+    region:
+      static : eu-north-1
+    stack:
+      auto : false
+

@@ -1,16 +1,16 @@
 package com.abdelrahman.productservice.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @SuperBuilder
 @Entity
 @Table(name = "product")
@@ -31,4 +31,6 @@ public class Product extends BaseEntity<Long> {
     @ManyToOne
     @JoinColumn(name = "discount_id",referencedColumnName = "id")
     private Discount discount;
+    @OneToMany(mappedBy = "product")
+    private Set<Attachment> attachments;
 }

@@ -1,6 +1,7 @@
 package com.abdelrahman.productservice.controller;
 
 import com.abdelrahman.productservice.dto.request.ProductRequest;
+import com.abdelrahman.productservice.service.AttachmentService;
 import com.abdelrahman.productservice.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,6 @@ public class ProductController {
     public ResponseEntity<String> updateProduct(@PathVariable(name = "product_id") Long id,@RequestBody ProductRequest productRequest){
         return productService.updateProduct(id,productRequest);
     }
-
 
 
 }

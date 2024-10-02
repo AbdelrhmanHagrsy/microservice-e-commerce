@@ -58,6 +58,7 @@ public class ReservedOrderConsumerListener {
             paymentTransactionRepository.save(paymentTransaction);
 
         } catch (Exception ex) {
+            log.error(ex.getMessage());
             orderPaymentMessage.setPaymentStatus(PaymentStatus.FAILED);
             orderPaymentMessage.setErrorMessage(ex.getMessage());
         }

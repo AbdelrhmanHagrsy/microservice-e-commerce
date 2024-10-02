@@ -1,10 +1,7 @@
 package com.abdelrhman.inventoryservice.entity;
 
 import com.abdelrhman.inventoryservice.dto.InventoryStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,6 +29,9 @@ public class ProductInventory  {
     private Integer damagedQuantity;
 
     private String location;
+
+    @Version
+    private Long version;
 
     @Enumerated(EnumType.STRING)
     private InventoryStatus inventoryStatus;

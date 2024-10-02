@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.abdelrahman.orderservice.constant.Constant.KafkaConst.KAFKA_ORDER_CREATED_TOPIC_NAME;
 
@@ -37,16 +38,15 @@ public class OrderService {
 
 
     @Transactional
-    public ResponseEntity<?> createOrder(OrderRequest orderRequest) {
-
-        // handel idempotency te prevent duplicate same order request
-        // add idempotent key in redis for 5 min
-        boolean status = redisService.addOrderLock(orderRequest.getIdempotentKey(), 300L);
-        if (!status) {
-            throw new OrderConflictExceotion("Order already processed");
-        }
+    public String createOrder(OrderRequest orderRequest) {
 
         try {
+            // handel idempotency te prevent duplicate same order request
+            // add idempotent key in redis for 5 min
+            boolean status = redisService.addOrderLock(orderRequest.getIdempotentKey(), 300L);
+            if (!status) {
+                throw new OrderConflictExceotion("Order already processed");
+            }
             // validate total price
             BigDecimal itemTotalPrice = orderRequest.getOrderItemDtoList().stream()
                     .map(x -> x.getItemPrice().multiply(BigDecimal.valueOf(x.getQuantity())))
@@ -65,6 +65,7 @@ public class OrderService {
                     .paymentId(orderRequest.getPaymentId())
                     .createdAt(LocalDate.now())
                     .build());
+            //
             for (OrderItemDto orderItemDto : orderRequest.getOrderItemDtoList()) {
                 orderItemRepository.save(OrderItem.builder()
                         .productId(orderItemDto.getProductId())
@@ -78,14 +79,16 @@ public class OrderService {
             // send kafka message to inventory service
             OrderCreatedMessage orderCreatedMessage = orderMapper.prepareOrderMessage(order, orderRequest);
             kafkaTemplate.send(KAFKA_ORDER_CREATED_TOPIC_NAME, orderCreatedMessage);
-            return ResponseEntity.status(HttpStatus.CREATED).body(order);
+            return "Order under processing";
         } catch (InvalidOrderException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
+            log.error(ex.getMessage());
+            throw ex;
         } catch (OrderConflictExceotion ex) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+            log.error(ex.getMessage());
+            throw ex;
         } catch (Exception ex) {
             log.error("Faild to create order: " + ex.getMessage());
-            return ResponseEntity.internalServerError().body("Failed to create order!");
+            throw ex;
         } finally {
             redisService.removeIdempotentKey(orderRequest.getIdempotentKey());
         }
@@ -93,7 +96,14 @@ public class OrderService {
     }
 
 
-    public List<Order> fetchUserOrders(String userName) {
-        return orderRepository.findByCustomerUserName(userName);
+    public List<Order> fetchAllOrdersByUserEmail(String userName) {
+        List<Order> orderList = orderRepository.findAllByCustomerUserName(userName);
+        // remove all canceled orders
+        orderList = orderList.stream().filter(x-> ! x.getOrderStatus().equals(OrderStatus.CANCELED)).collect(Collectors.toList());
+        return orderList;
     }
+    public List<Order> fetchAllCanceledOrdersByUserEmail(String userName) {
+        return orderRepository.findAllByCustomerUserNameAndOrderStatus(userName,OrderStatus.CANCELED);
+    }
+
 }

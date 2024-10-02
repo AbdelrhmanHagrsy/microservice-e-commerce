@@ -41,6 +41,8 @@ public class ProductInventoryService {
 
 
     @Transactional
+    // using Optimistic Locking to manage concurrent updates
+    // in case Optimistic Locking failure thrown  kafka will call this method again and retry to deduct
     public void deductOrderQuantityFromInventory(OrderCreatedMessage orderCreatedMessage) {
         for(OrderItemDto orderItemDto : orderCreatedMessage.getOrderItemDtoList()){
             ProductInventory productInventory = productInventoryRepository.findByProductId(orderItemDto.getProductId()).get();

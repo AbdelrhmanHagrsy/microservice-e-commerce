@@ -37,7 +37,7 @@ public class PaymentDetailsService {
             if(customerAddress.getPaymentType().equals(PaymentType.CASH)){
                 paymentDetails.setPaymentStatus(PaymentStatus.AWAITING_COD);
             }
-            if(customerAddress.getPaymentType().equals(PaymentType.CREDIT_CARD)){
+            if(customerAddress.getPaymentType().equals(PaymentType.VISA)){
                 // handel payment with credit card
                 paymentDetails.setPaymentStatus(PaymentStatus.COMPLETED);
             }

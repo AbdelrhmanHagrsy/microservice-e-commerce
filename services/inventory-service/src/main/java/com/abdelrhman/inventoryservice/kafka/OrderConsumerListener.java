@@ -67,7 +67,7 @@ public class OrderConsumerListener {
             }
             // Send order message to payment service
             sendToPaymentService(orderTransaction, orderCreatedMessage);
-        } catch (QuantityNotAvailable ex) {
+        } catch (QuantityNotAvailable ex ) {
             log.error("Error while deducting quantity for order id {}: {}", orderCreatedMessage.getOrderId(), ex.getMessage());
             OrderTransaction transaction = orderTransactionRepository.findById(orderCreatedMessage.getIdempotentKey()).orElseThrow();
             OrderReservationFailureMessage orderReservationFailureMessage = OrderReservationFailureMessage.builder()

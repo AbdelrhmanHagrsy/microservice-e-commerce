@@ -9,6 +9,8 @@ spring:
       username: abdelrahman
       password: abdelrahman
       authentication-database: admin
+      logging:
+        level: DEBUG
   cache:
     type: redis
     host: localhost
