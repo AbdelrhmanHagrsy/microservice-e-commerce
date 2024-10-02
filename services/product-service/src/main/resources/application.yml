@@ -37,8 +37,8 @@ kafka:
 cloud:
   aws:
     credentials:
-      access-key: test
-      secret-key: test
+      access-key: AKIA2AUOPCC2UZ3OYZ22
+      secret-key: 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
     region:
       static : eu-north-1
     stack:
