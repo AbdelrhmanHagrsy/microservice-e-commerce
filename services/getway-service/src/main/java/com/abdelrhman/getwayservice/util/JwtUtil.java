@@ -1,15 +1,16 @@
 package com.abdelrhman.getwayservice.util;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class JwtUtil {
@@ -18,6 +19,17 @@ public class JwtUtil {
 
     public void isTokenValid(String token){
         Jwts.parser().setSigningKey(getSignKey()).build().parseClaimsJws(token);
+    }
+
+    // Method to extract claims from the JWT
+    public Claims getAllClaimsFromToken(String token) {
+        Claims extractAllClaims = Jwts
+                .parser()
+                .setSigningKey(getSignKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return extractAllClaims;
     }
 
     private Key getSignKey() {

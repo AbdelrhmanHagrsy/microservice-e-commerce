@@ -3,9 +3,11 @@ package com.abdelrahaman.authenticationservice.service;
 import com.abdelrahaman.authenticationservice.client.EmailNotifClient;
 import com.abdelrahaman.authenticationservice.dto.RegistirationEmailRequest;
 import com.abdelrahaman.authenticationservice.dto.RegistrationRequest;
+import com.abdelrahaman.authenticationservice.dto.UserRoles;
 import com.abdelrahaman.authenticationservice.entity.ConfirmationToken;
 import com.abdelrahaman.authenticationservice.entity.User;
 import com.abdelrahaman.authenticationservice.exception.EntityAlreadyExist;
+import com.abdelrahaman.authenticationservice.exception.EntityNotFound;
 import com.abdelrahaman.authenticationservice.mapper.AuthMapper;
 import com.abdelrahaman.authenticationservice.repository.ConfirmationTokenRepository;
 import com.abdelrahaman.authenticationservice.repository.UserRepository;
@@ -97,5 +99,21 @@ public class AuthService {
     public void testKafka(RegistrationRequest registrationRequest) {
         CustomerCreationRequest customerCreationRequest = authMapper.convertRegisRequestToCustomerRequest(registrationRequest);
         kafkaTemplate.send("customerProfileCreation",customerCreationRequest);
+    }
+
+    public void changeUserRole(String userName, UserRoles userRoles) {
+        try {
+            User user = userRepository.findByUserName(userName)
+                    .orElseThrow(() -> new EntityNotFound(String.format("User name : %s is not exist !", userRoles)));
+            user.setUserRoles(userRoles);
+            userRepository.save(user);
+        }catch (EntityNotFound e){
+            log.error(e.getMessage());
+            throw e;
+        }catch (Exception e){
+            throw new RuntimeException("Failed to change user role !");
+        }
+
+
     }
 }

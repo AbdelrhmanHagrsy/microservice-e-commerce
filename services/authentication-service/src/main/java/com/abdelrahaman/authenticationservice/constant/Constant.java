@@ -12,6 +12,8 @@ public class Constant {
         public static final String LOGIN_API = "/login";
         public static final String CONFIRM_ACCOUNT_API = "/confirmAccount";
         public static final String VALIDATE_TOKEN = "/validateToken";
+        public static final String CHANGE_USER_ROLE = "/changeRole/{user_email}";
+
     }
 
 

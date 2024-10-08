@@ -15,7 +15,8 @@ public class RouteValidator {
             "/auth/user/confirm-account",
             "/auth/user/validateToken",
             "/auth/user/test",
-            "/auth/user/confirmAccount"
+            "/auth/user/confirmAccount",
+            "/auth/user/changeRole"
     );
 
    public Predicate<ServerHttpRequest> isScured =

@@ -29,9 +29,4 @@ public class Customer extends BaseEntity {
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "address_id",referencedColumnName = "id")
     private CustomerAddress customerAddress;
-    @Column(name = "is_admin")
-    private Boolean isAdmin;
-    @ManyToOne
-    @JoinColumn(name = "admin_type_id",referencedColumnName = "id")
-    private AdminType adminType;
 }

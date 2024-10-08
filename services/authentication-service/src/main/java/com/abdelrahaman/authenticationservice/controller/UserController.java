@@ -2,9 +2,12 @@ package com.abdelrahaman.authenticationservice.controller;
 
 import com.abdelrahaman.authenticationservice.dto.LogIn;
 import com.abdelrahaman.authenticationservice.dto.RegistrationRequest;
+import com.abdelrahaman.authenticationservice.dto.UserRoles;
+import com.abdelrahaman.authenticationservice.exception.EntityNotFound;
 import com.abdelrahaman.authenticationservice.service.AuthService;
 import com.abdelrahaman.authenticationservice.service.JwtService;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.client.Entity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -57,4 +60,15 @@ public class UserController {
         }
     }
 
+    @PutMapping(CHANGE_USER_ROLE)
+    public ResponseEntity<String> changeUserRole(@PathVariable(name = "user_email") String userEmail, @RequestParam(name = "role",required = true)UserRoles userRoles){
+        try{
+            authService.changeUserRole(userEmail,userRoles);
+            return  ResponseEntity.ok("User role changed successfully");
+        }catch (EntityNotFound e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
 }

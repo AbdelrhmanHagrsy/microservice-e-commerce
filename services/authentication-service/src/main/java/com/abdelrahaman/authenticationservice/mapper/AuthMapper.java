@@ -1,6 +1,7 @@
 package com.abdelrahaman.authenticationservice.mapper;
 
 import com.abdelrahaman.authenticationservice.dto.RegistrationRequest;
+import com.abdelrahaman.authenticationservice.dto.UserRoles;
 import com.abdelrahaman.authenticationservice.entity.User;
 import org.abdelrhman.common.kafka.CustomerCreationRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class AuthMapper {
                 .userName(registrationRequest.userName())
                 .password(passwordEncoder.encode(registrationRequest.password()))
                 .telephone(registrationRequest.telephone())
+                .userRoles(UserRoles.ROLE_USER)  // set role user as default role
                 .build();
     }
 

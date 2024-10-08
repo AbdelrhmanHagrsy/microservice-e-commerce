@@ -44,21 +44,29 @@ spring:
           uri: lb:http://EMAIL-NOTIF-SERVICE
           predicates:
             - Path=/email/**
+          filters:
+            - AuthenticationFilter
 
         - id: inventory-service
           uri: lb:http://INVENTORY-SERVICE
           predicates:
             - Path=/inventory/**
+          filters:
+            - AuthenticationFilter
 
         - id: order-service
           uri: lb:http://ORDER-SERVICE
           predicates:
             - Path=/orders/**
+          filters:
+            - AuthenticationFilter
 
         - id: payment-service
           uri: lb:http://PAYMENT-SERVICE
           predicates:
             - Path=/payments/**
+          filters:
+            - AuthenticationFilter
 
   application:
     name: getway-service

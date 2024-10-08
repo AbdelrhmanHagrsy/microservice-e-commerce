@@ -2,6 +2,7 @@ package com.abdelrhman.getwayservice.filter;
 
 import com.abdelrhman.getwayservice.client.AuthClient;
 import com.abdelrhman.getwayservice.util.JwtUtil;
+import io.jsonwebtoken.Claims;
 import org.apache.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -39,12 +40,11 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                 }
                 try {
                     // call validateToken api from auth-service by feignClient
-                    /*boolean isValid = authClient.validateToken(token);
-                    if(!isValid)
-                        throw new RuntimeException("token is unValid!");
-                     */
-
                     jwtUtil.isTokenValid(token);
+                    // set user role in request header
+                    Claims claims = jwtUtil.getAllClaimsFromToken(token);
+                    String role = claims.get("roles",String.class);
+                    exchange.getRequest().mutate().header("X-User-Roles",role);
 
                 } catch (Exception e) {
                     System.out.println("invalid access...!");

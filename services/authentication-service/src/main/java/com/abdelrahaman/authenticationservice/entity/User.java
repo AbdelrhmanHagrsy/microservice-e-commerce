@@ -1,5 +1,6 @@
 package com.abdelrahaman.authenticationservice.entity;
 
+import com.abdelrahaman.authenticationservice.dto.UserRoles;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,4 +22,5 @@ public class User {
     private String lastName;
     private String telephone;
     private Boolean isActive;
+    private UserRoles userRoles;
 }
