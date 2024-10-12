@@ -1,6 +1,7 @@
 package com.abdelrahman.productservice.controller;
 
 import com.abdelrahman.productservice.dto.DiscountDto;
+import com.abdelrahman.productservice.dto.UserRoles;
 import com.abdelrahman.productservice.repository.DiscountRepository;
 import com.abdelrahman.productservice.service.DiscountService;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +20,25 @@ public class DiscountController {
     private final DiscountService discountService;
 
     @PostMapping(ADD_DISCOUNT)
-    ResponseEntity<String> addDiscount(@RequestBody DiscountDto discountDto){
-        return discountService.addDiscount(discountDto);
+    ResponseEntity<String> addDiscount(
+            @RequestHeader(value = "X-User-Roles", required = true) String userRole,
+            @RequestBody DiscountDto discountDto) {
+        if (userRole.equals(UserRoles.SUPER_ADMIN.name()) || userRole.equals(UserRoles.PRODUCT_MANAGER.name())) {
+            return discountService.addDiscount(discountDto);
+        } else {
+            return ResponseEntity.status(org.apache.http.HttpStatus.SC_UNAUTHORIZED).build();
+        }
     }
 
     @PutMapping(UPDATE_DISCOUNT)
-    ResponseEntity<String> updateDiscount(@PathVariable(name = "discount_id") Long id,@RequestBody DiscountDto discountDto){
-        return discountService.updateDiscount(id,discountDto);
+    ResponseEntity<String> updateDiscount(
+            @RequestHeader(value = "X-User-Roles", required = true) String userRole,
+            @PathVariable(name = "discount_id") Long id, @RequestBody DiscountDto discountDto) {
+        if (userRole.equals(UserRoles.SUPER_ADMIN.name()) || userRole.equals(UserRoles.PRODUCT_MANAGER.name())) {
+            return discountService.updateDiscount(id, discountDto);
+        } else {
+            return ResponseEntity.status(org.apache.http.HttpStatus.SC_UNAUTHORIZED).build();
+        }
     }
 
     @GetMapping(GET_DISCOUNT)

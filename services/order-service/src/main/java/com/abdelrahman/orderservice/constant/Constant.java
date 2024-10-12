@@ -5,11 +5,16 @@ public class Constant {
     public final  class OrderController{
         public static final String ORDER = "/orders/order";
         public static final String ADD_ORDER = "/add";
+        public static final String MARK_ORDER_AS_DELIVERED_ORDER = "/markAsDelivered/{order_id}";
+        public static final String MARK_ORDER_AS_PAID_ORDER = "/markAsPaid/{order_id}";
+
+
         public static final String UPDATE_ORDER = "/update/{order_id}";
         public static final String GET_ORDER = "/get/{order_id}";
         public static final String FETCH_ORDERS_BY_USER_NAME = "/getAll/{userName}";
         public static final String FETCH_CANCELED_ORDERS_BY_USER_NAME = "/getAll/canceled/{userName}";
 
+        public static final String FETCH_COMPLETED_ORDERS_BY_USER_NAME = "/getAll/completed/{userName}";
 
     }
 

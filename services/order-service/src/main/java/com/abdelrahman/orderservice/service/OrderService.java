@@ -3,8 +3,7 @@ package com.abdelrahman.orderservice.service;
 import com.abdelrahman.orderservice.dto.kafka.*;
 import com.abdelrahman.orderservice.entity.Order;
 import com.abdelrahman.orderservice.entity.OrderItem;
-import com.abdelrahman.orderservice.exception.InvalidOrderException;
-import com.abdelrahman.orderservice.exception.OrderConflictExceotion;
+import com.abdelrahman.orderservice.exception.*;
 import com.abdelrahman.orderservice.mapper.OrderMapper;
 import com.abdelrahman.orderservice.repository.OrderItemRepository;
 import com.abdelrahman.orderservice.repository.OrderRepository;
@@ -95,7 +94,56 @@ public class OrderService {
 
     }
 
+    public String markOrderAsDelivered(String orderId) {
+        try {
+            Order order = orderRepository.findById(orderId)
+                    .orElseThrow(() -> new EntityNotFound("Order not exist!"));
 
+            // validate order status before paid order
+            if(order.getOrderStatus().equals(OrderStatus.CANCELED))
+                throw new OrderDeliveredFailed("Cannot mark order as delivered: The order has been canceled and cannot be processed.");
+
+            if (order.getDeliveryStatus().equals(DeliveryStatus.DELIVERED)) {
+                throw new OrderDeliveredFailed("Order already delivered");
+            }
+            if(! order.getPaymentStatus().equals(PaymentStatus.COMPLETED))
+                throw new OrderDeliveredFailed("Order should get paid first");
+
+            order.setDeliveryStatus(DeliveryStatus.DELIVERED);
+            order.setOrderStatus(OrderStatus.COMPLETED);
+            orderRepository.save(order);
+            return "Order is completed successfully";
+        }catch (OrderDeliveredFailed e){
+            throw e;
+        }
+        catch (EntityNotFound e) {
+            log.error(e.getMessage());
+            throw e;
+        }
+
+    }
+    public String markOrderAsPaid(String orderId) {
+        try {
+            Order order = orderRepository.findById(orderId)
+                    .orElseThrow(() -> new EntityNotFound("Order not exist!"));
+
+            // validate order status before paid order
+            if(order.getOrderStatus().equals(OrderStatus.CANCELED))
+                throw new OrderPaidFailed("Cannot mark order as paid: The order has been canceled and cannot be processed.");
+            if(order.getPaymentStatus().equals(PaymentStatus.COMPLETED))
+                throw new OrderPaidFailed("Cannot mark order as paid: The order has already been paid.");
+
+            order.setOrderStatus(OrderStatus.COMPLETED);
+            orderRepository.save(order);
+            return "Order marked as paid successfully.";
+        }catch (OrderPaidFailed e){
+            throw e;
+        }
+        catch (EntityNotFound e) {
+            log.error(e.getMessage());
+            throw e;
+        }
+    }
     public List<Order> fetchAllOrdersByUserEmail(String userName) {
         List<Order> orderList = orderRepository.findAllByCustomerUserName(userName);
         // remove all canceled orders
@@ -105,5 +153,10 @@ public class OrderService {
     public List<Order> fetchAllCanceledOrdersByUserEmail(String userName) {
         return orderRepository.findAllByCustomerUserNameAndOrderStatus(userName,OrderStatus.CANCELED);
     }
+    public List<Order> fetchAllCompletedOrdersByUserEmail(String userName) {
+        return orderRepository.findAllByCustomerUserNameAndOrderStatus(userName,OrderStatus.COMPLETED);
+    }
+
+
 
 }

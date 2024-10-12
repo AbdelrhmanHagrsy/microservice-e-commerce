@@ -3,6 +3,7 @@ package com.abdelrahman.productservice.controller;
 import com.abdelrahman.productservice.dto.OfferDto;
 import com.abdelrahman.productservice.dto.OfferRequest;
 import com.abdelrahman.productservice.dto.ProductCategoryDto;
+import com.abdelrahman.productservice.dto.UserRoles;
 import com.abdelrahman.productservice.dto.request.ProductRequest;
 import com.abdelrahman.productservice.exception.EntityNotFound;
 import com.abdelrahman.productservice.service.OfferService;
@@ -28,16 +29,22 @@ public class OfferController {
 
 
     // POST method to handle offer submission with OfferDto and image
-    @PostMapping(path = ADD_OFFER, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(path = ADD_OFFER, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<String> addOffer(
+            @RequestHeader(value = "X-User-Roles", required = true) String userRole,
             @RequestPart("offerRequest")
             String offerRequest,      // Accepts JSON as part of multipart
             @RequestPart("image") MultipartFile image) {  // Accepts image file
         try {
-            OfferRequest offer = objectMapper.readValue(offerRequest,OfferRequest.class);
-            // Call service to handle the logic
-            String response = offerService.addOffer(offer, image);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            if (userRole.equals(UserRoles.SUPER_ADMIN.name()) || userRole.equals(UserRoles.PRODUCT_MANAGER.name())) {
+                OfferRequest offer = objectMapper.readValue(offerRequest, OfferRequest.class);
+                // Call service to handle the logic
+                String response = offerService.addOffer(offer, image);
+                return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            } else {
+                return ResponseEntity.status(org.apache.http.HttpStatus.SC_UNAUTHORIZED).body("You do not have permission to update product.");
+            }
+
         } catch (EntityNotFound e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
@@ -47,10 +54,17 @@ public class OfferController {
 
 
     @DeleteMapping(DELETE_OFFER)
-    public ResponseEntity<Void> deleteOffer(@PathVariable(name = "offer_id") Long offerId){
+    public ResponseEntity<Void> deleteOffer(
+            @RequestHeader(value = "X-User-Roles", required = true) String userRole,
+            @PathVariable(name = "offer_id") Long offerId){
         try {
-            offerService.deleteOffer(offerId);
-            return ResponseEntity.ok().build();
+            if (userRole.equals(UserRoles.SUPER_ADMIN.name()) || userRole.equals(UserRoles.PRODUCT_MANAGER.name())) {
+                offerService.deleteOffer(offerId);
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.status(org.apache.http.HttpStatus.SC_UNAUTHORIZED).build();
+            }
+
         }catch (EntityNotFound e){
             return ResponseEntity.badRequest().build();
         }catch (Exception e){
@@ -59,13 +73,20 @@ public class OfferController {
     }
 
     @PutMapping(CHANGE_OFFER_ACTIVITY_STATUS)
-    public ResponseEntity<Void> changeOfferActivity(@PathVariable(name = "offer_id") Long offerId,@RequestParam(name = "status") Boolean status){
+    public ResponseEntity<Void> changeOfferActivity(
+            @RequestHeader(value = "X-User-Roles", required = true) String userRole,
+            @PathVariable(name = "offer_id") Long offerId, @RequestParam(name = "status") Boolean status) {
         try {
-            offerService.changeOfferStatus(offerId,status);
-            return ResponseEntity.ok().build();
-        }catch (EntityNotFound e){
+
+            if (userRole.equals(UserRoles.SUPER_ADMIN.name()) || userRole.equals(UserRoles.PRODUCT_MANAGER.name())) {
+                offerService.changeOfferStatus(offerId, status);
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.status(org.apache.http.HttpStatus.SC_UNAUTHORIZED).build();
+            }
+        } catch (EntityNotFound e) {
             return ResponseEntity.badRequest().build();
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }

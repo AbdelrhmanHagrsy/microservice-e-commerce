@@ -35,7 +35,7 @@ public class ProductService {
     private final ProductMapper productMapper;
     private final KafkaTemplate<String, ProductMessage> kafkaTemplate;
 
-    public ResponseEntity<String> addProduct(ProductRequest productRequest) {
+    public String addProduct(ProductRequest productRequest) {
 
         try {
             // Validation
@@ -64,18 +64,18 @@ public class ProductService {
             // Send product to NoSQL service via Kafka
             kafkaTemplate.send(KAFKA_PRODUCT_TOPIC_NAME, productMapper.prepareProductMessage(product,ProductMessageStatus.CREATE));
 
-            return ResponseEntity.ok("Product added successfully.");
+            return "Product added successfully.";
 
         } catch (EntityNotFound | EntityAlreadyExist exception) {
-            return ResponseEntity.badRequest().body(exception.getMessage());
+            throw exception;
         } catch (Exception exception) {
             log.error("Error while adding product",exception.getMessage());
-            return ResponseEntity.internalServerError().body("An unexpected error occurred while adding the product.");
+            throw new RuntimeException("An unexpected error occurred while adding the product.");
         }
     }
 
 
-    public ResponseEntity<String> updateProduct(Long productId, ProductRequest productRequest) {
+    public String updateProduct(Long productId, ProductRequest productRequest) {
 
         try {
             Product product = productRepository.findById(productId)
@@ -99,14 +99,13 @@ public class ProductService {
             // Send product to NoSQL service via Kafka
             kafkaTemplate.send(KAFKA_PRODUCT_TOPIC_NAME, productMapper.prepareProductMessage(product, ProductMessageStatus.UPDATE));
 
-            return ResponseEntity.ok("Product updated successfully.");
+            return "Product updated successfully.";
 
         } catch (EntityNotFound exception) {
-            return ResponseEntity.badRequest().body(exception.getMessage());
-
+            throw  exception;
         } catch (Exception exception) {
             log.error("Error while updating product :" + exception.getMessage());
-            return ResponseEntity.internalServerError().body("An unexpected error occurred while updating the product.");
+            throw new RuntimeException("An unexpected error occurred while updating the product.");
         }
     }
 
